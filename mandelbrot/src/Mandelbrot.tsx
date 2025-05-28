@@ -77,7 +77,7 @@ function Mandelbrot() {
       />
       {dragging && dragStart && dragEnd && (
         <div
-          className="absolute border border-black"
+          className="absolute border border-white"
           style={{
             left: Math.min(dragStart.x, dragEnd.x),
             top: Math.min(dragStart.y, dragEnd.y),

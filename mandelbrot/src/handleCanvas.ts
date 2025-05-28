@@ -12,13 +12,13 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
   _.scale(devicePixelRatio, devicePixelRatio)
 
   let shouldStopDrawing = false
-  const drawIterationStep = 4 * 32 * 32 * 32
+  const drawIterationStep = 2 * 32 * 32 * 32
   const computeIterationStep = 100
 
   const canvasWidth = canvas.clientWidth
   const canvasHeight = canvas.clientHeight
 
-  const scaleBase = 0.003
+  const baseScale = 0.003
   const viewportScale = viewport.width / canvasWidth
 
   const cursor: XY = { x: 0, y: 0 }
@@ -62,7 +62,7 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
     for (let i = 0; i < computeIterationStep; i++) {
       factor = i / computeIterationStep
 
-      z = addVector(squareComplexNumber(z), scaleVector(substractVector(scaleVector(cursor, viewportScale), centerMinusViewport), scaleBase))
+      z = addVector(squareComplexNumber(z), scaleVector(substractVector(scaleVector(cursor, viewportScale), centerMinusViewport), baseScale))
 
       if (getComplexNumberNorm(z) > 2) break
     }

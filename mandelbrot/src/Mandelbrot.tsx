@@ -1,8 +1,10 @@
 import { type MouseEvent, useCallback, useEffect, useRef, useState } from 'react'
 
-import handleCanvas from './handleCanvas'
 import type { Rect, XY } from './types'
-import useEventListener from './useEventListener'
+import handleCanvas from './handleCanvas'
+import useEventListener from './hooks/useEventListener'
+import useWindowSize from './hooks/useWindowSize'
+import useDebounce from './hooks/useDebounce'
 
 const DEFAULT_VIEWPORT: Rect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }
 const TRANSLATION_FACTOR = 0.1
@@ -58,11 +60,14 @@ function Mandelbrot() {
 
   useEventListener('keydown', handleKeyDown)
 
+  const { width } = useWindowSize()
+  const debouncedWidth = useDebounce(width, 100)
+
   useEffect(() => {
     if (!canvasRef.current) return
 
     return handleCanvas(canvasRef.current, viewport)
-  }, [viewport])
+  }, [viewport, debouncedWidth])
 
   return (
     <div

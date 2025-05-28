@@ -56,6 +56,7 @@ function Mandelbrot() {
     if (event.key === 'ArrowDown') setViewport(vp => ({ ...vp, y: vp.y + TRANSLATION_FACTOR * vp.height }))
     if (event.key === '[') setViewport(vp => ({ ...vp, width: vp.width * (1 + ZOOM_FACTOR), height: vp.height * (1 + ZOOM_FACTOR) }))
     if (event.key === ']') setViewport(vp => ({ ...vp, width: vp.width * (1 - ZOOM_FACTOR), height: vp.height * (1 - ZOOM_FACTOR) }))
+    if (event.key === '=') setViewport(DEFAULT_VIEWPORT)
   }, [])
 
   useEventListener('keydown', handleKeyDown)

@@ -36,11 +36,11 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
   }
 
   function drawHelpers() {
-    console.log('viewport', viewport)
-    _.beginPath()
-    _.arc(center.x, center.y, 12, 0, 2 * Math.PI)
-    _.fillStyle = 'green'
-    _.fill()
+    console.log('viewport', viewport, viewportScale)
+    // _.beginPath()
+    // _.arc(center.x, center.y, 12, 0, 2 * Math.PI)
+    // _.fillStyle = 'green'
+    // _.fill()
 
     // _.beginPath()
     // _.arc(centerOffsetScaled.x, centerOffsetScaled.y, 12, 0, 2 * Math.PI)
@@ -73,13 +73,15 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
 
     for (let i = 0; i < computeIterationStep; i++) {
       factor = i / computeIterationStep
+
       let cx = substactVector(cursor, center)
       cx = addVector(cx, viewport)
-      cx = scaleVector(cx, viewportScale)
-      cx = substactVector(cx, viewport)
-      // cx = substactVector(cx, scaleVector(viewport, viewportScale))
+      cx = scaleVector(cx, scaleBase)
+      // cx = scaleVector(cx, viewportScale)
+      // cx = substactVector(cx, scaleVector(viewport, 1 / viewportScale))
+      // cx = substactVector(cx, center)
 
-      z = addVector(squareComplexNumber(z), scaleVector(cx, scaleBase))
+      z = addVector(squareComplexNumber(z), cx)
 
       if (getComplexNumberNorm(z) > 2) break
     }

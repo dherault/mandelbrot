@@ -2,8 +2,9 @@ import { type MouseEvent, useCallback, useEffect, useRef, useState } from 'react
 
 import handleCanvas from './handleCanvas'
 import type { Rect, XY } from './types'
+import useEventListener from './useEventListener'
 
-const DEFAULT_VIEWPORT: Rect = { x: 200, y: 200, width: window.innerWidth / 2, height: window.innerHeight / 2 }
+const DEFAULT_VIEWPORT: Rect = { x: 0, y: 0, width: window.innerWidth / 1, height: window.innerHeight / 1 }
 const MIN_DRAG_SIZE = 12
 
 function Mandelbrot() {
@@ -20,6 +21,10 @@ function Mandelbrot() {
   }, [])
 
   const handleMouseUp = useCallback(() => {
+    setDragging(false)
+    setDragStart(null)
+    setDragEnd(null)
+
     if (!(dragging && dragStart && dragEnd)) return
 
     const x = Math.min(dragStart.x, dragEnd.x) + viewport.x
@@ -30,9 +35,6 @@ function Mandelbrot() {
     if (width < MIN_DRAG_SIZE || height < MIN_DRAG_SIZE) return
 
     setViewport({ x, y, width, height })
-    setDragging(false)
-    setDragStart(null)
-    setDragEnd(null)
   }, [dragging, dragStart, dragEnd, viewport])
 
   const handleMouseMove = useCallback((event: MouseEvent) => {
@@ -44,6 +46,17 @@ function Mandelbrot() {
 
     setDragEnd({ x: event.clientX, y: dragStart.y + height })
   }, [dragging, dragStart])
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') setViewport(vp => ({ ...vp, x: vp.x - 0.1 * vp.width }))
+    if (event.key === 'ArrowRight') setViewport(vp => ({ ...vp, x: vp.x + 0.1 * vp.width }))
+    if (event.key === 'ArrowUp') setViewport(vp => ({ ...vp, y: vp.y - 0.1 * vp.height }))
+    if (event.key === 'ArrowDown') setViewport(vp => ({ ...vp, y: vp.y + 0.1 * vp.height }))
+    if (event.key === '[') setViewport(vp => ({ ...vp, width: vp.width * 0.9, height: vp.height * 0.9 }))
+    if (event.key === ']') setViewport(vp => ({ ...vp, width: vp.width * 1.1, height: vp.height * 1.1 }))
+  }, [])
+
+  useEventListener('keydown', handleKeyDown)
 
   useEffect(() => {
     if (!canvasRef.current) return

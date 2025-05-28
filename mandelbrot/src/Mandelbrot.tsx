@@ -72,7 +72,7 @@ function Mandelbrot() {
 
   return (
     <div
-      className="relative h-screen w-screen"
+      className="relative h-screen w-screen bg-black"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

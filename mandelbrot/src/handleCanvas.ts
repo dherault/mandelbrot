@@ -1,5 +1,5 @@
 import type { Rect, XY } from './types'
-import { addVector, getComplexNumberNorm, scaleVector, squareComplexNumber, substactVector } from './math'
+import { addVector, getComplexNumberNorm, scaleVector, squareComplexNumber, substractVector } from './math'
 
 function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
   const _ = canvas.getContext('2d')!
@@ -74,12 +74,11 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
     for (let i = 0; i < computeIterationStep; i++) {
       factor = i / computeIterationStep
 
-      let cx = substactVector(cursor, center)
+      let cx = substractVector(cursor, center)
       cx = addVector(cx, viewport)
+      cx = scaleVector(cx, 1 / viewportScale)
+      cx = substractVector(cx, viewport)
       cx = scaleVector(cx, scaleBase)
-      // cx = scaleVector(cx, viewportScale)
-      // cx = substactVector(cx, scaleVector(viewport, 1 / viewportScale))
-      // cx = substactVector(cx, center)
 
       z = addVector(squareComplexNumber(z), cx)
 

@@ -4,8 +4,9 @@ import handleCanvas from './handleCanvas'
 import type { Rect, XY } from './types'
 import useEventListener from './useEventListener'
 
-const DEFAULT_VIEWPORT: Rect = { x: 0, y: 0, width: window.innerWidth / 1, height: window.innerHeight / 1 }
-const MIN_DRAG_SIZE = 12
+const DEFAULT_VIEWPORT: Rect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight }
+const TRANSLATION_FACTOR = 0.1
+const ZOOM_FACTOR = 0.25
 
 function Mandelbrot() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -27,12 +28,11 @@ function Mandelbrot() {
 
     if (!(dragging && dragStart && dragEnd)) return
 
-    const x = Math.min(dragStart.x, dragEnd.x) + viewport.x
-    const y = Math.min(dragStart.y, dragEnd.y) + viewport.y
-    const width = Math.abs(dragEnd.x - dragStart.x) / window.innerWidth * viewport.width
-    const height = Math.abs(dragEnd.y - dragStart.y) / window.innerHeight * viewport.height
-
-    if (width < MIN_DRAG_SIZE || height < MIN_DRAG_SIZE) return
+    const ar = window.innerWidth / viewport.width
+    const x = Math.min(dragStart.x, dragEnd.x) / ar + viewport.x
+    const y = Math.min(dragStart.y, dragEnd.y) / ar + viewport.y
+    const width = Math.abs(dragEnd.x - dragStart.x) / ar
+    const height = Math.abs(dragEnd.y - dragStart.y) / ar
 
     setViewport({ x, y, width, height })
   }, [dragging, dragStart, dragEnd, viewport])
@@ -48,12 +48,12 @@ function Mandelbrot() {
   }, [dragging, dragStart])
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === 'ArrowLeft') setViewport(vp => ({ ...vp, x: vp.x - 0.1 * vp.width }))
-    if (event.key === 'ArrowRight') setViewport(vp => ({ ...vp, x: vp.x + 0.1 * vp.width }))
-    if (event.key === 'ArrowUp') setViewport(vp => ({ ...vp, y: vp.y - 0.1 * vp.height }))
-    if (event.key === 'ArrowDown') setViewport(vp => ({ ...vp, y: vp.y + 0.1 * vp.height }))
-    if (event.key === '[') setViewport(vp => ({ ...vp, width: vp.width * 0.9, height: vp.height * 0.9 }))
-    if (event.key === ']') setViewport(vp => ({ ...vp, width: vp.width * 1.1, height: vp.height * 1.1 }))
+    if (event.key === 'ArrowLeft') setViewport(vp => ({ ...vp, x: vp.x - TRANSLATION_FACTOR * vp.width }))
+    if (event.key === 'ArrowRight') setViewport(vp => ({ ...vp, x: vp.x + TRANSLATION_FACTOR * vp.width }))
+    if (event.key === 'ArrowUp') setViewport(vp => ({ ...vp, y: vp.y - TRANSLATION_FACTOR * vp.height }))
+    if (event.key === 'ArrowDown') setViewport(vp => ({ ...vp, y: vp.y + TRANSLATION_FACTOR * vp.height }))
+    if (event.key === '[') setViewport(vp => ({ ...vp, width: vp.width * (1 + ZOOM_FACTOR), height: vp.height * (1 + ZOOM_FACTOR) }))
+    if (event.key === ']') setViewport(vp => ({ ...vp, width: vp.width * (1 - ZOOM_FACTOR), height: vp.height * (1 - ZOOM_FACTOR) }))
   }, [])
 
   useEventListener('keydown', handleKeyDown)

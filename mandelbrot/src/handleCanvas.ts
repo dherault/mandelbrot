@@ -21,9 +21,8 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
   const scaleBase = 0.003
   const viewportScale = viewport.width / canvasWidth
 
-  const center: XY = { x: canvasWidth / 1.666, y: canvasHeight / 2 }
   const cursor: XY = { x: 0, y: 0 }
-
+  const center: XY = { x: canvasWidth / 1.666, y: canvasHeight / 2 }
   const centerMinusViewport = substractVector(center, viewport)
 
   /* ---
@@ -35,21 +34,6 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
 
     _.fillStyle = getColorGradient(getConversionFactor())
     _.fillRect(cursor.x, cursor.y, 1, 1)
-  }
-
-  function drawHelpers() {
-    console.log('viewport', viewport, viewportScale)
-
-    drawDot(center, 'green')
-    drawDot(viewport, 'purple')
-    drawDot(centerMinusViewport, 'yellow')
-  }
-
-  function drawDot(center: XY, color: string) {
-    _.beginPath()
-    _.arc(center.x, center.y, 12, 0, 2 * Math.PI)
-    _.fillStyle = color
-    _.fill()
   }
 
   /* ---
@@ -78,10 +62,7 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
     for (let i = 0; i < computeIterationStep; i++) {
       factor = i / computeIterationStep
 
-      let cx = substractVector(cursor, centerMinusViewport)
-      cx = scaleVector(cx, scaleBase)
-
-      z = addVector(squareComplexNumber(z), cx)
+      z = addVector(squareComplexNumber(z), scaleVector(substractVector(scaleVector(cursor, viewportScale), centerMinusViewport), scaleBase))
 
       if (getComplexNumberNorm(z) > 2) break
     }
@@ -105,12 +86,7 @@ function handleCanvas(canvas: HTMLCanvasElement, viewport: Rect) {
       update()
     }
 
-    if (shouldStopDrawing) {
-      stopped = true
-
-      drawHelpers()
-    }
-
+    if (shouldStopDrawing) stopped = true
     if (stopped) return
 
     requestAnimationFrame(step)

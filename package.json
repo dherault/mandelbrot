@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "mandelbrot-monorepo",
+  "scripts": {},
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-dherault-typescript": "^1.4.0"
+  }
+}
